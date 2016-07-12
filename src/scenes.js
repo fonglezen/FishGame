@@ -9,7 +9,6 @@ var GameScene = cc.Scene.extend({
 		bg.y = Const.winHeight/2;
 		var bgw = bg.width;
 		var bgh = bg.height;
-		console.log(bgw);
 		bg.scaleX = Const.winWidth/bgw;
 		bg.scaleY = Const.winHeight/bgh;
 
@@ -39,11 +38,22 @@ var GameLayer = cc.Layer.extend({
 
 		// 初始化鱼钩
 		this.fishHook = new cc.Sprite(res.hook);
+		this.fishHook.anchorY = 0.3*Const.scaleX;
+
 		this.fishHook.x = Const.winWidth/2;
-		this.fishHook.y = Const.winHeight + this.fishHook.height*Const.scaleX*0.36;
+		this.fishHook.y = this.fishHook.height*Const.scaleX*0.58;
+
 		this.fishHook.scaleX = Const.scaleX;
 		this.fishHook.scaleY = Const.scaleX;
-		this.addChild(this.fishHook);
+		this.addChild(this.fishHook,20);
+
+		// 钩子旋转
+		var action1 = cc.rotateTo(1,40,0);
+		var action2 = cc.rotateTo(1,0,0);
+		var action3 = cc.rotateTo(1,-40,0);
+		var action4 = cc.reverseTime(action3);
+		var sequence = cc.sequence(action1,action2,action3,action2);
+		this.fishHook.runAction(cc.repeatForever(sequence))
 
 	},
 
@@ -100,7 +110,6 @@ var ScoreLayer = cc.Layer.extend({
 		
 		var scorestr = '分数：' + this.gameLayer.score;
 		this.scoreText.setString(scorestr);
-		console.log(this.scorew/2 - (scorestr.length-3)*9 - 3*18)
 		this.scoreText.x = this.scorew/2;
 	}
 
