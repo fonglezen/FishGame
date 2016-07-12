@@ -22,6 +22,8 @@ var GameScene = cc.Scene.extend({
 });
 
 var ScoreLayer = cc.Layer.extend({
+	scoreText:null,
+
 	ctor:function(){
 		this._super();
 		var scorepanel = new cc.Sprite(res.score_board);
@@ -33,6 +35,18 @@ var ScoreLayer = cc.Layer.extend({
 		scorepanel.y = Const.winHeight*0.87;
 
 		this.addChild(scorepanel);
+
+		// 分数
+		var scoreText = new cc.LabelTTF('分数：0','arial','36');
+		scoreText.x = scoreText.width/2 + 10;
+		scoreText.y = scoreText.height/2;
+		scoreText.setColor(cc.color(255,255,255));
+		this.scoreText = scoreText;
+		scorepanel.addChild(scoreText);
+
+	},
+
+	changeScore:function(){
 
 	}
 });
