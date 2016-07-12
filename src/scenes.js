@@ -31,18 +31,25 @@ var GameLayer = cc.Layer.extend({
 	hooks:[],
 	ctor:function(){
 		this._super();
-		var _this = this;
-		
-		for(var i = 0; i < _this.hookcount; i++){
-			_this.hooks[i] = new cc.Sprite(res.score_hook);
-			_this.hooks[i].y = Const.winHeight - _this.hooks[i].height*Const.scaleX*0.5;
-			_this.hooks[i].x = Const.winWidth - _this.hooks[i].width*Const.scaleX*i - _this.hooks[i].width/2
-			_this.hooks[i].scaleX = Const.scaleX;
-			_this.hooks[i].scaleY = Const.scaleX;
+		this.initHooks();
 
-			_this.addChild(_this.hooks[i]);
+	},
+
+	fadeOutHook:function(){
+		this.hookcount -= 1;
+		this.hooks[this.hookcount].runAction(cc.fadeOut(1));
+	},
+
+	initHooks:function(){
+		for(var i = 0; i < this.hookcount; i++){
+			this.hooks[i] = new cc.Sprite(res.score_hook);
+			this.hooks[i].y = Const.winHeight - this.hooks[i].height*Const.scaleX*0.5;
+			this.hooks[i].x = Const.winWidth - this.hooks[i].width*Const.scaleX*i - this.hooks[i].width/2
+			this.hooks[i].scaleX = Const.scaleX;
+			this.hooks[i].scaleY = Const.scaleX;
+
+			this.addChild(this.hooks[i]);
 		}
-
 	}
 });
 
