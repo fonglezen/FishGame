@@ -27,12 +27,22 @@ var GameScene = cc.Scene.extend({
 
 var GameLayer = cc.Layer.extend({
 	score:0,
+	hookcount:Const.HookChance,
+	hooks:[],
 	ctor:function(){
 		this._super();
 		var _this = this;
-		setInterval(function(){
-			_this.score += parseInt(Math.random()*20+1, 10);
-		},100)
+		
+		for(var i = 0; i < _this.hookcount; i++){
+			_this.hooks[i] = new cc.Sprite(res.score_hook);
+			_this.hooks[i].y = Const.winHeight - _this.hooks[i].height*Const.scaleX*0.5;
+			_this.hooks[i].x = Const.winWidth - _this.hooks[i].width*Const.scaleX*i - _this.hooks[i].width/2
+			_this.hooks[i].scaleX = Const.scaleX;
+			_this.hooks[i].scaleY = Const.scaleX;
+
+			_this.addChild(_this.hooks[i]);
+		}
+
 	}
 });
 
