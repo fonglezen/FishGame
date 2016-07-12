@@ -31,22 +31,24 @@ var GameLayer = cc.Layer.extend({
 		this._super();
 		var _this = this;
 		setInterval(function(){
-			_this.score += parseInt(Math.random()*10+1, 10);
-		},2000)
+			_this.score += parseInt(Math.random()*20+1, 10);
+		},100)
 	}
 });
 
 var ScoreLayer = cc.Layer.extend({
 	scoreText:null,
 	gameLayer:null,
+	scorew:null,
+
 	ctor:function(gamelayer){
 		this._super();
 		this.gameLayer = gamelayer;
 		var scorepanel = new cc.Sprite(res.score_board);
-		var scorew = scorepanel.width;
+		this.scorew = scorepanel.width;
 		var scoreh = scorepanel.height;
-		scorepanel.scaleX = Const.winWidth*0.4/scorew;
-		scorepanel.scaleY = Const.winWidth*0.4/scorew;
+		scorepanel.scaleX = Const.winWidth*0.4/this.scorew;
+		scorepanel.scaleY = Const.winWidth*0.4/this.scorew;
 		scorepanel.x = Const.winWidth*0.8; 
 		scorepanel.y = Const.winHeight*0.87;
 
@@ -54,7 +56,7 @@ var ScoreLayer = cc.Layer.extend({
 
 		// 分数
 		var scoreText = new cc.LabelTTF('分数：0','arial','36');
-		scoreText.x = scoreText.width/2 + 10;
+		scoreText.x = this.scorew/2 - scoreText.width/2;
 		scoreText.y = scoreText.height/2;
 		scoreText.setColor(cc.color(255,255,255));
 		this.scoreText = scoreText;
@@ -66,7 +68,11 @@ var ScoreLayer = cc.Layer.extend({
 	},
 
 	update:function(){
-		this.scoreText.setString('分数：' + this.gameLayer.score);
+		
+		var scorestr = '分数：' + this.gameLayer.score;
+		this.scoreText.setString(scorestr);
+		console.log(this.scorew/2 - (scorestr.length-3)*9 - 3*18)
+		this.scoreText.x = this.scorew/2;
 	}
 
 });
