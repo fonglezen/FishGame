@@ -1,4 +1,5 @@
 var GameScene = cc.Scene.extend({
+	
 	ctor:function(){
 		this._super();
 
@@ -14,18 +15,33 @@ var GameScene = cc.Scene.extend({
 
 		this.addChild(bg);
 
+		var gameLayer = new GameLayer();
+		this.addChild(gameLayer);
 
-		var scoreLayer = new ScoreLayer();
+		var scoreLayer = new ScoreLayer(gameLayer);
 		this.addChild(scoreLayer);
 
 	}
 });
 
-var ScoreLayer = cc.Layer.extend({
-	scoreText:null,
 
+var GameLayer = cc.Layer.extend({
+	score:0,
 	ctor:function(){
 		this._super();
+		var _this = this;
+		setInterval(function(){
+			_this.score += parseInt(Math.random()*10+1, 10);
+		},2000)
+	}
+});
+
+var ScoreLayer = cc.Layer.extend({
+	scoreText:null,
+	gameLayer:null,
+	ctor:function(gamelayer){
+		this._super();
+		this.gameLayer = gamelayer;
 		var scorepanel = new cc.Sprite(res.score_board);
 		var scorew = scorepanel.width;
 		var scoreh = scorepanel.height;
@@ -44,11 +60,15 @@ var ScoreLayer = cc.Layer.extend({
 		this.scoreText = scoreText;
 		scorepanel.addChild(scoreText);
 
+		//更新分数
+		this.scheduleUpdate();
+
 	},
 
-	changeScore:function(){
-
+	update:function(){
+		this.scoreText.setString('分数：' + this.gameLayer.score);
 	}
+
 });
 
 var StartScene = cc.Scene.extend({
