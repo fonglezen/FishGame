@@ -29,9 +29,21 @@ var GameLayer = cc.Layer.extend({
 	score:0,
 	hookcount:Const.HookChance,
 	hooks:[],
+	fishHook:null,
+
 	ctor:function(){
 		this._super();
+
+		// 初始化钩子数量
 		this.initHooks();
+
+		// 初始化鱼钩
+		this.fishHook = new cc.Sprite(res.hook);
+		this.fishHook.x = Const.winWidth/2;
+		this.fishHook.y = Const.winHeight + this.fishHook.height*Const.scaleX*0.36;
+		this.fishHook.scaleX = Const.scaleX;
+		this.fishHook.scaleY = Const.scaleX;
+		this.addChild(this.fishHook);
 
 	},
 
