@@ -30,8 +30,11 @@ var GameLayer = cc.Layer.extend({
 	hooks:[],
 	fishHook:null,
 	fishesL:[],
+	fishLayerL:[],
 	fishesM:[],
+	fishLayerM:[],
 	fishesS:[],
+	fishLayerS:[],
 	largeFish:Const.largeFish,
 	middleFish:Const.middleFish,
 	smallFish:Const.smallFish,
@@ -101,22 +104,26 @@ var GameLayer = cc.Layer.extend({
 		while (l > 0) {
 			var lrd = parseInt(Math.random()*3+1);
 			var lf = new cc.Sprite("src/img/l_"+lrd+".png");
+			var l_layer = new cc.Layer();
+
 			// 鱼的大小
 			var lw = this.fishtype["l_"+lrd].width/4;
 			var lh = this.fishtype["l_"+lrd].height;
 			lf.anchorX = 0;
 			lf.anchorY = 0;
-			console.log("l_"+lrd)
-			console.log('this.fishtype["l_"+lrd].width=',this.fishtype["l_"+lrd].width)
-			console.log('lw=',lw)
+
+			var direction = (new Date()).getTime()%2 == 0 ? 1 : -1;
 
 			//鱼的啥位置
-			lf.x = Math.random()*(Const.winWidth - lw);
-			lf.y = Math.random()*(Const.winHeight*0.8 - lh)+Const.winHeight*0.2-lh;
+			l_layer.x = direction*1.2*lw;
+			l_layer.y = Math.random()*(Const.winHeight*0.8 - lh)+Const.winHeight*0.2-lh;
+			lf.x = 0;
+			lf.y = 0;
+			this.addChild(l_layer);
 
 			//鱼的遮罩
 			var clippingPanel = new cc.ClippingNode();
-			this.addChild(clippingPanel,2);
+			l_layer.addChild(clippingPanel,2);
 			clippingPanel.addChild(lf,1);
 			var stencil = new cc.DrawNode();
 			stencil.drawRect(cc.p(lf.x,lf.y+lh),cc.p(lf.x+lw,lf.y),cc.color(0,0,0),1,cc.color(0,0,0));
@@ -124,41 +131,53 @@ var GameLayer = cc.Layer.extend({
 
 			//添加到数组中
 			this.fishesL.push(lf);
+			this.fishLayerL.push(l_layer);
 
 			//鱼的自身动画
 			var flen = this.fishesL.length;
+			var ylen = this.fishLayerL.length;
 			this.animateFish(this.fishesL[flen-1],lw,lf.x);
+			this.animateFishLayer(this.fishLayerL[ylen-1], l_layer.y ,lw,20);
 			
 			l-=1;
 		}
 
 		while (m > 0) {
 			var mrd = parseInt(Math.random()*2+1);
-			var mf = new cc.Sprite("src/img/m_"+lrd+".png");
+			var mf = new cc.Sprite("src/img/m_"+mrd+".png"); 
+			var m_layer = new cc.Layer();
 
 			// 鱼的大小
-			var mw = this.fishtype["m_"+lrd].width/4;
-			var mh = this.fishtype["m_"+lrd].height;
+			var mw = this.fishtype["m_"+mrd].width/4;
+			var mh = this.fishtype["m_"+mrd].height;
 			mf.anchorX = 0;
 			mf.anchorY = 0;
-			
+
 			//鱼的啥位置
-			mf.x = Math.random()*(Const.winWidth - mw);
-			mf.y = Math.random()*(Const.winHeight*0.8 - mh)+Const.winHeight*0.2 - mh;
+			m_layer.x = -1.2*mw;
+			m_layer.y = Math.random()*(Const.winHeight*0.8 - mh)+Const.winHeight*0.2 - mh;
+			mf.x = 0;
+			mf.y = 0;
+
+			this.addChild(m_layer);
 
 			//鱼的遮罩
 			var clippingPanel = new cc.ClippingNode();
-			this.addChild(clippingPanel,2);
+			m_layer.addChild(clippingPanel,2);
 			clippingPanel.addChild(mf,1);
 			var stencil = new cc.DrawNode();
 			stencil.drawRect(cc.p(mf.x,mf.y+mh),cc.p(mf.x+mw,mf.y),cc.color(0,0,0),1,cc.color(0,0,0));
 			clippingPanel.stencil = stencil;
 
+			//添加到数组中
 			this.fishesM.push(mf);
+			this.fishLayerM.push(m_layer);
 
 			//鱼的自身动画
 			var flen = this.fishesM.length;
+			var ylen = this.fishLayerM.length;
 			this.animateFish(this.fishesM[flen-1],mw,mf.x);
+			this.animateFishLayer(this.fishLayerM[ylen-1], m_layer.y ,mw,15);
 
 			m-=1;
 		}
@@ -166,6 +185,7 @@ var GameLayer = cc.Layer.extend({
 		while (s > 0) {
 			var srd = parseInt(Math.random()+1);
 			var sf = new cc.Sprite("src/img/s_"+srd+".png");
+			var s_layer = new cc.Layer();
 
 			// 鱼的大小
 			var sw = this.fishtype["s_"+srd].width/4;
@@ -174,28 +194,43 @@ var GameLayer = cc.Layer.extend({
 			sf.anchorY = 0;
 			
 			//鱼的啥位置
-			sf.x = Math.random()*(Const.winWidth - sw);
-			sf.y = Math.random()*(Const.winHeight*0.8 - sh) + Const.winHeight*0.2 - sh;
+			s_layer.x = -1.2*mw;
+			s_layer.y = Math.random()*(Const.winHeight*0.8 - sh) + Const.winHeight*0.2 - sh;
+			sf.x = 0;
+			sf.y = 0;
+
+			this.addChild(s_layer);
 
 			//鱼的遮罩
 			var clippingPanel = new cc.ClippingNode();
-			this.addChild(clippingPanel,2);
+			s_layer.addChild(clippingPanel,2);
 			clippingPanel.addChild(sf,1);
 			var stencil = new cc.DrawNode();
 			stencil.drawRect(cc.p(sf.x,sf.y+sh),cc.p(sf.x+sw,sf.y),cc.color(0,0,0),1,cc.color(0,0,0));
 			clippingPanel.stencil = stencil;
 
 			this.fishesS.push(sf);
+			this.fishLayerS.push(s_layer);
 			//鱼的自身动画
 			var flen = this.fishesS.length;
+			var ylen = this.fishLayerS.length;
 			this.animateFish(this.fishesS[flen-1],sw,sf.x);
+			this.animateFishLayer(this.fishLayerS[ylen-1], s_layer.y ,sw,10);
 			s-=1;
 		}
 
 
 	},
 
+	animateFishLayer:function(layer,y,lw,duration){
+		var action = cc.moveTo(duration,Const.winWidth+100, y);
+		var reverse = cc.moveTo(duration,-1.2*lw, y);
+		var sequence = cc.sequence(action,reverse);
+		layer.runAction(cc.repeatForever(sequence));
+	},
+
 	animateFish:function(fish,width,x){
+		
 		var ii = 0;
 		setInterval(function(){
 			fish.x = x - width*ii;
