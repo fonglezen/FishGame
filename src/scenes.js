@@ -100,7 +100,7 @@ var GameLayer = cc.Layer.extend({
 
 	initFishes:function(){
 		
-		var l = 2,m = 4,s = 6;
+		var l = 6,m = 4,s = 2;
 		while (l > 0) {
 			var lrd = parseInt(Math.random()*3+1);
 			var lf = new cc.Sprite("src/img/l_"+lrd+".png");
@@ -116,7 +116,7 @@ var GameLayer = cc.Layer.extend({
 
 			//鱼的啥位置
 			l_layer.y = Math.random()*(Const.winHeight*0.5 - lh)+Const.winHeight*0.2-lh;
-			var direction = (new Date()).getTime()%2 == 0 ? 1 : -1;
+			var direction = parseInt(Math.random()*99+1) % 2 == 0 ? 1 : -1;
 			// var direction = 1;
 			if(direction == 1){
 				//当方向右边的时候
@@ -168,7 +168,7 @@ var GameLayer = cc.Layer.extend({
 
 			//鱼的啥位置
 			m_layer.y = Math.random()*(Const.winHeight*0.5 - mh)+Const.winHeight*0.2 - mh;
-			var direction = (new Date()).getTime()%2 == 0 ? 1 : -1;
+			var direction = parseInt(Math.random()*99+1) % 2 == 0 ? 1 : -1;
 			// var direction = 1;
 			if(direction == 1){
 				//当方向右边的时候
@@ -218,7 +218,7 @@ var GameLayer = cc.Layer.extend({
 			
 			//鱼的啥位置
 			s_layer.y = Math.random()*(Const.winHeight*0.5 - sh) + Const.winHeight*0.2 - sh;
-			var direction = (new Date()).getTime()%2 == 0 ? 1 : -1;
+			var direction = parseInt(Math.random()*99+1) % 2 == 0 ? 1 : -1;
 			// var direction = 1;
 			if(direction == 1){
 				//当方向右边的时候
@@ -255,17 +255,17 @@ var GameLayer = cc.Layer.extend({
 	},
 
 	animateFishLayer:function(layer,y,w,duration,direction,fish){
-		var action,reverse,sequence,scale;
+		var action,reverse,sequence,scale,scale2 = cc.scaleTo(0,1,1);
 		if(direction == 1){
 			scale = cc.scaleTo(0,-1,1);
 			action = cc.moveTo(duration,-1.2*w, y);
 			reverse = cc.moveTo(duration,Const.winWidth + 1.2*w, y);
-			sequence = cc.sequence(action,scale,reverse);
+			sequence = cc.sequence(scale2,action,scale,reverse);
 		}else{
 			scale = cc.scaleTo(0,-1,1);
 			action = cc.moveTo(duration,Const.winWidth+100, y);
 			reverse = cc.moveTo(duration,-1.2*w, y);
-			sequence = cc.sequence(scale,action,reverse);
+			sequence = cc.sequence(scale,action,scale2,reverse);
 		}
 		
 		layer.runAction(cc.repeatForever(sequence));

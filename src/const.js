@@ -5,8 +5,8 @@ var Const = {
 	// 总的可玩次数
 	HookChance:5,
 
-	largeFish:20,
+	largeFish:50,
 	middleFish:30,
-	smallFish:50
+	smallFish:20
 
 }
