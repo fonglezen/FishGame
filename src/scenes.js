@@ -15,10 +15,10 @@ var GameScene = cc.Scene.extend({
 		this.addChild(bg);
 
 		var gameLayer = new GameLayer();
-		this.addChild(gameLayer);
+		this.addChild(gameLayer,2);
 
 		var scoreLayer = new ScoreLayer(gameLayer);
-		this.addChild(scoreLayer);
+		this.addChild(scoreLayer,1);
 
 	}
 });
@@ -29,11 +29,16 @@ var GameLayer = cc.Layer.extend({
 	hookcount:Const.HookChance,
 	hooks:[],
 	fishHook:null,
-	fishes:[],
+	fishesL:[],
+	fishesM:[],
+	fishesS:[],
+	largeFish:Const.largeFish,
+	middleFish:Const.middleFish,
+	smallFish:Const.smallFish,
 
 	fishtype:{
 		l_1:{width:336,height:84},
-		l_2:{width:400,height:80},
+		l_2:{width:336,height:84},
 		l_3:{width:480,height:82},
 		l_4:{width:400,height:80},
 		m_1:{width:280,height:70},
@@ -91,70 +96,117 @@ var GameLayer = cc.Layer.extend({
 	},
 
 	initFishes:function(){
-		//large fish
-		var l = 5,m = 10,s = 20;
-		while(l >= 1){
-			var clip = new cc.ClippingNode();
-			this.addChild(clip,2);
-			var nd =  parseInt(Math.random()*4+1, 10);
-			var l_fish = new cc.Sprite('src/img/l_'+ nd +'.png');
-			clip.x = -1*l_fish.width;
-			clip.y = parseInt(Math.random()*Const.winHeight*0.7 + Const.winHeight*0.1 , 10);
-			l_fish.x = l_fish.width/2;
-			l_fish.y = l_fish.height/2;
 		
-			this.fishes.push(clip);
+		var l = 2,m = 4,s = 6;
+		while (l > 0) {
+			var lrd = parseInt(Math.random()*3+1);
+			var lf = new cc.Sprite("src/img/l_"+lrd+".png");
+			// 鱼的大小
+			var lw = this.fishtype["l_"+lrd].width/4;
+			var lh = this.fishtype["l_"+lrd].height;
+			lf.anchorX = 0;
+			lf.anchorY = 0;
+			console.log("l_"+lrd)
+			console.log('this.fishtype["l_"+lrd].width=',this.fishtype["l_"+lrd].width)
+			console.log('lw=',lw)
 
-			clip.addChild(this.fishes[this.fishes.length-1],1);
+			//鱼的啥位置
+			lf.x = Math.random()*(Const.winWidth - lw);
+			lf.y = Math.random()*(Const.winHeight*0.8 - lh)+Const.winHeight*0.2-lh;
 
+			//鱼的遮罩
+			var clippingPanel = new cc.ClippingNode();
+			this.addChild(clippingPanel,2);
+			clippingPanel.addChild(lf,1);
 			var stencil = new cc.DrawNode();
-			stencil.drawRect(cc.p(l_fish.x,l_fish.y),cc.p(l_fish.x+fishtype['l_'+nd].width/4,l_fish.y + fishtype['l_'+nd]).height,cc.color(0,0,0),1,cc.color(0,0,0));
-			clip.stencil = stencil;
+			stencil.drawRect(cc.p(lf.x,lf.y+lh),cc.p(lf.x+lw,lf.y),cc.color(0,0,0),1,cc.color(0,0,0));
+			clippingPanel.stencil = stencil;
 
-			var action1 = cc.moveTo(10,Const.winWidth+l_fish.width,l_fish.y);
-			var action2 = cc.rotateTo(0.5,0,180);
-			var action4 = cc.rotateTo(0.5,0,0);
-			var action3 = cc.moveTo(10,-1*l_fish.width,l_fish.y);
-			var sequence = cc.sequence(action1,action4,action3,action2);
-			var repeat = cc.repeatForever(sequence);
-			this.fishes[this.fishes.length-1].runAction(repeat);
+			//添加到数组中
+			this.fishesL.push(lf);
 
+			//鱼的自身动画
+			var flen = this.fishesL.length;
+			this.animateFish(this.fishesL[flen-1],lw,lf.x);
+			
 			l-=1;
 		}
 
-		console.log('l')
+		while (m > 0) {
+			var mrd = parseInt(Math.random()*2+1);
+			var mf = new cc.Sprite("src/img/m_"+lrd+".png");
 
-		while(m >= 1){
-			var m_fish = new cc.Sprite('src/img/m_'+ parseInt(Math.random()*3+1, 10) +'.png');
-			m_fish.x = -1*m_fish.width;
-			m_fish.y = parseInt(Math.random()*Const.winHeight*0.7 + Const.winHeight*0.1 , 10);
+			// 鱼的大小
+			var mw = this.fishtype["m_"+lrd].width/4;
+			var mh = this.fishtype["m_"+lrd].height;
+			mf.anchorX = 0;
+			mf.anchorY = 0;
 			
-			// var action1 = cc.moveTo(10,Const.winWidth+l_fish.width,l_fish.y);
-			// var action2 = cc.rotateTo(0.5,0,-180);
-			// var action3 = cc.moveTo(10,-1*l_fish.width,l_fish.y);
-			// var sequence = cc.sequence(action1,action2,action3);
-			// var repeat = cc.repeatForever(sequence);
+			//鱼的啥位置
+			mf.x = Math.random()*(Const.winWidth - mw);
+			mf.y = Math.random()*(Const.winHeight*0.8 - mh)+Const.winHeight*0.2 - mh;
 
-			this.fishes.push(m_fish);
-			this.addChild(this.fishes[this.fishes.length - 1]);
+			//鱼的遮罩
+			var clippingPanel = new cc.ClippingNode();
+			this.addChild(clippingPanel,2);
+			clippingPanel.addChild(mf,1);
+			var stencil = new cc.DrawNode();
+			stencil.drawRect(cc.p(mf.x,mf.y+mh),cc.p(mf.x+mw,mf.y),cc.color(0,0,0),1,cc.color(0,0,0));
+			clippingPanel.stencil = stencil;
 
-			// this.fishes[-1].runAction(repeat);
+			this.fishesM.push(mf);
+
+			//鱼的自身动画
+			var flen = this.fishesM.length;
+			this.animateFish(this.fishesM[flen-1],mw,mf.x);
+
 			m-=1;
 		}
+		
+		while (s > 0) {
+			var srd = parseInt(Math.random()+1);
+			var sf = new cc.Sprite("src/img/s_"+srd+".png");
 
-		while(s >= 1){
-			var s_fish = new cc.Sprite('src/img/s_'+ parseInt(Math.random()*2+1, 10) +'.png');
-
-			s_fish.x = -1*s_fish.width;
-			s_fish.y = parseInt(Math.random()*Const.winHeight*0.7 + Const.winHeight*0.1 , 10);
+			// 鱼的大小
+			var sw = this.fishtype["s_"+srd].width/4;
+			var sh = this.fishtype["s_"+srd].height;
+			sf.anchorX = 0;
+			sf.anchorY = 0;
 			
-			this.fishes.push(s_fish);
-			this.addChild(this.fishes[this.fishes.length - 1]);
+			//鱼的啥位置
+			sf.x = Math.random()*(Const.winWidth - sw);
+			sf.y = Math.random()*(Const.winHeight*0.8 - sh) + Const.winHeight*0.2 - sh;
+
+			//鱼的遮罩
+			var clippingPanel = new cc.ClippingNode();
+			this.addChild(clippingPanel,2);
+			clippingPanel.addChild(sf,1);
+			var stencil = new cc.DrawNode();
+			stencil.drawRect(cc.p(sf.x,sf.y+sh),cc.p(sf.x+sw,sf.y),cc.color(0,0,0),1,cc.color(0,0,0));
+			clippingPanel.stencil = stencil;
+
+			this.fishesS.push(sf);
+			//鱼的自身动画
+			var flen = this.fishesS.length;
+			this.animateFish(this.fishesS[flen-1],sw,sf.x);
 			s-=1;
 		}
 
-		
 
+	},
+
+	animateFish:function(fish,width,x){
+		var ii = 0;
+		setInterval(function(){
+			fish.x = x - width*ii;
+			
+			if(ii == 3){
+				ii = 0
+			}else{
+				ii+=1;
+			}
+			
+		},150);
 	}
 });
 
@@ -201,6 +253,8 @@ var ScoreLayer = cc.Layer.extend({
 var StartScene = cc.Scene.extend({
 	onEnter:function(){
 		this._super();
+
+		console.log('Const.winWidth=',Const.winWidth)
 
 		/* 背景图片 */
 		var bg = new cc.Sprite(res.start_bg);
