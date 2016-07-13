@@ -112,13 +112,24 @@ var GameLayer = cc.Layer.extend({
 			lf.anchorX = 0;
 			lf.anchorY = 0;
 
-			var direction = (new Date()).getTime()%2 == 0 ? 1 : -1;
+			
 
 			//鱼的啥位置
-			l_layer.x = direction*1.2*lw;
-			l_layer.y = Math.random()*(Const.winHeight*0.8 - lh)+Const.winHeight*0.2-lh;
+			l_layer.y = Math.random()*(Const.winHeight*0.5 - lh)+Const.winHeight*0.2-lh;
+			var direction = (new Date()).getTime()%2 == 0 ? 1 : -1;
+			// var direction = 1;
+			if(direction == 1){
+				//当方向右边的时候
+				l_layer.x = direction*1.2*lw + Const.winWidth;
+			}else{
+				//当方向是在左边的时候
+				l_layer.x = direction*1.2*lw;
+			}
+
 			lf.x = 0;
 			lf.y = 0;
+			l_layer.anchorX = 0;
+			l_layer.anchorY = 0;
 			this.addChild(l_layer);
 
 			//鱼的遮罩
@@ -136,8 +147,8 @@ var GameLayer = cc.Layer.extend({
 			//鱼的自身动画
 			var flen = this.fishesL.length;
 			var ylen = this.fishLayerL.length;
-			this.animateFish(this.fishesL[flen-1],lw,lf.x);
-			this.animateFishLayer(this.fishLayerL[ylen-1], l_layer.y ,lw,20);
+			this.animateFish(this.fishesL[flen-1],lw,lf.x,20);
+			this.animateFishLayer(this.fishLayerL[ylen-1], l_layer.y ,lw,20,direction,this.fishesL[flen-1]);
 			
 			l-=1;
 		}
@@ -152,10 +163,20 @@ var GameLayer = cc.Layer.extend({
 			var mh = this.fishtype["m_"+mrd].height;
 			mf.anchorX = 0;
 			mf.anchorY = 0;
+			m_layer.anchorX = 0;
+			m_layer.anchorY = 0;
 
 			//鱼的啥位置
-			m_layer.x = -1.2*mw;
-			m_layer.y = Math.random()*(Const.winHeight*0.8 - mh)+Const.winHeight*0.2 - mh;
+			m_layer.y = Math.random()*(Const.winHeight*0.5 - mh)+Const.winHeight*0.2 - mh;
+			var direction = (new Date()).getTime()%2 == 0 ? 1 : -1;
+			// var direction = 1;
+			if(direction == 1){
+				//当方向右边的时候
+				m_layer.x = direction*1.2*mw + Const.winWidth;
+			}else{
+				//当方向是在左边的时候
+				m_layer.x = direction*1.2*mw;
+			}
 			mf.x = 0;
 			mf.y = 0;
 
@@ -176,8 +197,8 @@ var GameLayer = cc.Layer.extend({
 			//鱼的自身动画
 			var flen = this.fishesM.length;
 			var ylen = this.fishLayerM.length;
-			this.animateFish(this.fishesM[flen-1],mw,mf.x);
-			this.animateFishLayer(this.fishLayerM[ylen-1], m_layer.y ,mw,15);
+			this.animateFish(this.fishesM[flen-1],mw,mf.x,15);
+			this.animateFishLayer(this.fishLayerM[ylen-1], m_layer.y ,mw,15,direction,this.fishesM[flen-1]);
 
 			m-=1;
 		}
@@ -192,10 +213,21 @@ var GameLayer = cc.Layer.extend({
 			var sh = this.fishtype["s_"+srd].height;
 			sf.anchorX = 0;
 			sf.anchorY = 0;
+			s_layer.anchorX = 0;
+			s_layer.anchorY = 0;
 			
 			//鱼的啥位置
-			s_layer.x = -1.2*mw;
-			s_layer.y = Math.random()*(Const.winHeight*0.8 - sh) + Const.winHeight*0.2 - sh;
+			s_layer.y = Math.random()*(Const.winHeight*0.5 - sh) + Const.winHeight*0.2 - sh;
+			var direction = (new Date()).getTime()%2 == 0 ? 1 : -1;
+			// var direction = 1;
+			if(direction == 1){
+				//当方向右边的时候
+				s_layer.x = direction*1.2*sw + Const.winWidth;
+			}else{
+				//当方向是在左边的时候
+				s_layer.x = direction*1.2*sw;
+
+			}
 			sf.x = 0;
 			sf.y = 0;
 
@@ -214,23 +246,33 @@ var GameLayer = cc.Layer.extend({
 			//鱼的自身动画
 			var flen = this.fishesS.length;
 			var ylen = this.fishLayerS.length;
-			this.animateFish(this.fishesS[flen-1],sw,sf.x);
-			this.animateFishLayer(this.fishLayerS[ylen-1], s_layer.y ,sw,10);
+			this.animateFish(this.fishesS[flen-1],sw,sf.x,10);
+			this.animateFishLayer(this.fishLayerS[ylen-1], s_layer.y ,sw,10,direction,this.fishesS[flen-1]);
 			s-=1;
 		}
 
 
 	},
 
-	animateFishLayer:function(layer,y,lw,duration){
-		var action = cc.moveTo(duration,Const.winWidth+100, y);
-		var reverse = cc.moveTo(duration,-1.2*lw, y);
-		var sequence = cc.sequence(action,reverse);
+	animateFishLayer:function(layer,y,w,duration,direction,fish){
+		var action,reverse,sequence,scale;
+		if(direction == 1){
+			scale = cc.scaleTo(0,-1,1);
+			action = cc.moveTo(duration,-1.2*w, y);
+			reverse = cc.moveTo(duration,Const.winWidth + 1.2*w, y);
+			sequence = cc.sequence(action,scale,reverse);
+		}else{
+			scale = cc.scaleTo(0,-1,1);
+			action = cc.moveTo(duration,Const.winWidth+100, y);
+			reverse = cc.moveTo(duration,-1.2*w, y);
+			sequence = cc.sequence(scale,action,reverse);
+		}
+		
 		layer.runAction(cc.repeatForever(sequence));
 	},
 
-	animateFish:function(fish,width,x){
-		
+	animateFish:function(fish,width,x,duration){
+
 		var ii = 0;
 		setInterval(function(){
 			fish.x = x - width*ii;
