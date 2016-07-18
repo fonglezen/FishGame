@@ -112,18 +112,16 @@ var GameLayer = cc.Layer.extend({
 			lf.anchorX = 0;
 			lf.anchorY = 0;
 
-			
-
 			//鱼的啥位置
 			l_layer.y = Math.random()*(Const.winHeight*0.5 - lh)+Const.winHeight*0.2-lh;
 			var direction = parseInt(Math.random()*99+1) % 2 == 0 ? 1 : -1;
 			// var direction = 1;
 			if(direction == 1){
 				//当方向右边的时候
-				l_layer.x = direction*1.2*lw + Const.winWidth;
+				l_layer.x = direction*1.2*lw + Const.winWidth + l*25;
 			}else{
 				//当方向是在左边的时候
-				l_layer.x = direction*1.2*lw;
+				l_layer.x = direction*1.2*lw - l*100;
 			}
 
 			lf.x = 0;
@@ -148,7 +146,7 @@ var GameLayer = cc.Layer.extend({
 			var flen = this.fishesL.length;
 			var ylen = this.fishLayerL.length;
 			this.animateFish(this.fishesL[flen-1],lw,lf.x,20);
-			this.animateFishLayer(this.fishLayerL[ylen-1], l_layer.y ,lw,20,direction,this.fishesL[flen-1]);
+			this.animateFishLayer(this.fishLayerL[ylen-1], l_layer.y ,lw,20,direction,this.fishesL[flen-1],l_layer.x);
 			
 			l-=1;
 		}
@@ -172,10 +170,10 @@ var GameLayer = cc.Layer.extend({
 			// var direction = 1;
 			if(direction == 1){
 				//当方向右边的时候
-				m_layer.x = direction*1.2*mw + Const.winWidth;
+				m_layer.x = direction*1.2*mw + Const.winWidth + m*20;
 			}else{
 				//当方向是在左边的时候
-				m_layer.x = direction*1.2*mw;
+				m_layer.x = direction*1.2*mw - m*50;
 			}
 			mf.x = 0;
 			mf.y = 0;
@@ -198,7 +196,7 @@ var GameLayer = cc.Layer.extend({
 			var flen = this.fishesM.length;
 			var ylen = this.fishLayerM.length;
 			this.animateFish(this.fishesM[flen-1],mw,mf.x,15);
-			this.animateFishLayer(this.fishLayerM[ylen-1], m_layer.y ,mw,15,direction,this.fishesM[flen-1]);
+			this.animateFishLayer(this.fishLayerM[ylen-1], m_layer.y ,mw,15,direction,this.fishesM[flen-1],m_layer.x);
 
 			m-=1;
 		}
@@ -222,10 +220,10 @@ var GameLayer = cc.Layer.extend({
 			// var direction = 1;
 			if(direction == 1){
 				//当方向右边的时候
-				s_layer.x = direction*1.2*sw + Const.winWidth;
+				s_layer.x = direction*1.2*sw + Const.winWidth + s * 50;
 			}else{
 				//当方向是在左边的时候
-				s_layer.x = direction*1.2*sw;
+				s_layer.x = direction*1.2*sw - s * 30;
 
 			}
 			sf.x = 0;
@@ -247,24 +245,25 @@ var GameLayer = cc.Layer.extend({
 			var flen = this.fishesS.length;
 			var ylen = this.fishLayerS.length;
 			this.animateFish(this.fishesS[flen-1],sw,sf.x,10);
-			this.animateFishLayer(this.fishLayerS[ylen-1], s_layer.y ,sw,10,direction,this.fishesS[flen-1]);
+			this.animateFishLayer(this.fishLayerS[ylen-1], s_layer.y ,sw,10,direction,this.fishesS[flen-1],s_layer.x);
 			s-=1;
 		}
 
 
 	},
 
-	animateFishLayer:function(layer,y,w,duration,direction,fish){
+	animateFishLayer:function(layer,y,w,duration,direction,fish,x){
 		var action,reverse,sequence,scale,scale2 = cc.scaleTo(0,1,1);
+		console.log(x)
 		if(direction == 1){
 			scale = cc.scaleTo(0,-1,1);
-			action = cc.moveTo(duration,-1.2*w, y);
-			reverse = cc.moveTo(duration,Const.winWidth + 1.2*w, y);
+			action = cc.moveTo(duration, (x - Const.winWidth)*-1, y);
+			reverse = cc.moveTo(duration,x, y);
 			sequence = cc.sequence(scale2,action,scale,reverse);
 		}else{
 			scale = cc.scaleTo(0,-1,1);
-			action = cc.moveTo(duration,Const.winWidth+100, y);
-			reverse = cc.moveTo(duration,-1.2*w, y);
+			action = cc.moveTo(duration,Const.winWidth+x*-1, y);
+			reverse = cc.moveTo(duration,x, y);
 			sequence = cc.sequence(scale,action,scale2,reverse);
 		}
 		
