@@ -38,6 +38,8 @@ var GameLayer = cc.Layer.extend({
 	largeFish:Const.largeFish,
 	middleFish:Const.middleFish,
 	smallFish:Const.smallFish,
+	hookStop:false,
+	ang:Math.atan((Const.winWidth/2)/Const.winHeight)*180/Math.PI,
 
 	fishtype:{
 		l_1:{width:336,height:84},
@@ -77,7 +79,69 @@ var GameLayer = cc.Layer.extend({
 		var action3 = cc.rotateTo(1,-40,0);
 		var sequence = cc.sequence(action1,action2,action3,action2);
 		this.fishHook.runAction(cc.repeatForever(sequence));
+		var tt = this;
+		// 点击页面，释放钩子
+		if('touches' in cc.sys.capabilities){
+			cc.eventManager.addListener({
+				event:cc.EventListener.TOUCH_ONE_BY_ONE,
+				onTouchBegan:function(){
+					tt.hookFish(tt);
+				}
+			},this);
+		}else if('mouse' in cc.sys.capabilities){
+			cc.eventManager.addListener({
+				event:cc.EventListener.MOUSE,
+				onMouseDown:function(){
+					tt.hookFish(tt);
+				}
+			},this);
+		}
 
+
+	},
+
+	hookFish:function(tt){  //钓鱼
+		
+		/* 钩子的动画 */
+		if(tt.hookStop){
+			tt.hookStop = false;
+			// 钩子旋转
+			var action1 = cc.rotateTo(1,40,0);
+			var action2 = cc.rotateTo(1,0,0);
+			var action3 = cc.rotateTo(1,-40,0);
+			var sequence = cc.sequence(action1,action2,action3,action2);
+			tt.fishHook.runAction(cc.repeatForever(sequence));
+		}else{
+			tt.hookStop = true;
+			tt.fishHook.stopAllActions(); 
+		}
+		
+		/* 目前旋转的角度 */		
+		var rotate = tt.fishHook.getRotationX(),
+			base_ang = tt.ang.toFixed(2),
+			p_x = 0,
+			p_y = 0,
+			tan_rotate = Math.abs(Math.tan(rotate*(Math.PI/180)));
+
+		/* 求出要到边缘的点 */
+		if(rotate > base_ang){
+			p_x = 0;
+			p_y = Const.winWidth/2/tan_rotate;
+		}else if(rotate <= base_ang &&  rotate > 0){
+			p_y = Const.winHeight;
+			p_x = Const.winWidth/2 - tan_rotate * p_y;
+		}else if(rotate <= 0 && rotate > -1*base_ang){
+			p_y = Const.winHeight;
+			p_x = Const.winWidth/2 + tan_rotate * p_y;
+		}else{
+			p_x = Const.winWidth;
+			p_y = Const.winWidth/2/tan_rotate;
+		}
+
+		/*  碰撞检测 */
+
+
+		/* 捕鱼结果 */
 
 	},
 
