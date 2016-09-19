@@ -79,6 +79,7 @@ var GameLayer = cc.Layer.extend({
 		var action3 = cc.rotateTo(1,-40,0);
 		var sequence = cc.sequence(action1,action2,action3,action2);
 		this.fishHook.runAction(cc.repeatForever(sequence));
+
 		var tt = this;
 		// 点击页面，释放钩子
 		if('touches' in cc.sys.capabilities){
@@ -114,34 +115,66 @@ var GameLayer = cc.Layer.extend({
 		}else{
 			tt.hookStop = true;
 			tt.fishHook.stopAllActions(); 
+			/* 目前旋转的角度 */		
+			var rotate = tt.fishHook.getRotationX(),
+				base_ang = tt.ang.toFixed(2),
+				p_x = 0,
+				p_y = 0,
+				p_x2 = 0,
+				p_y2 = 0,
+				tan_rotate = Math.abs(Math.tan(rotate*(Math.PI/180))),
+				hookLine = tt.fishHook.height*0.3*Const.scaleX*0.58,
+				ac = 0;
+				console.info('==============');
+				console.log('hookLine',hookLine);
+			/* 求出要到边缘的点 */
+			if(rotate > base_ang){
+				console.log('type 1');
+				p_x = 0;
+				p_y = Const.winWidth/2/tan_rotate;
+				ac = Math.sqrt(Const.winWidth*Const.winWidth + p_y*p_y) - hookLine;
+				p_y = Const.winHeight - Const.winWidth/2/tan_rotate;
+				p_x2 = Const.winWidth/2 - Math.sin(rotate*(Math.PI/180))*ac;
+				p_y2 = Const.winHeight - Math.cos(rotate*(Math.PI/180))*ac;
+				
+			}else if(rotate <= base_ang &&  rotate > 0){
+				p_y = Const.winHeight;
+				p_x = Const.winWidth/2 - tan_rotate * p_y;
+				ac = Math.sqrt(tan_rotate * p_y*tan_rotate * p_y + Const.winHeight*Const.winHeight) - hookLine;
+				p_y = 0;
+				p_x2 = Const.winWidth/2 - Math.sin(rotate*(Math.PI/180))*ac;
+				p_y2 = Const.winHeight - Math.cos(rotate*(Math.PI/180))*ac;
+
+			}else if(rotate <= 0 && rotate > -1*base_ang){
+				p_y = Const.winHeight;
+				p_x = Const.winWidth/2 + tan_rotate * p_y;
+				ac = Math.sqrt(tan_rotate * p_y*tan_rotate * p_y + Const.winHeight*Const.winHeight) - hookLine;
+				p_y = 0;
+				p_x2 = Const.winWidth/2 + Math.sin(rotate*(Math.PI/180))*ac*-1;
+				p_y2 = Const.winHeight - Math.cos(rotate*(Math.PI/180))*ac;
+			}else{
+				p_x = Const.winWidth;
+				p_y = Const.winWidth/2/tan_rotate;
+
+				ac = Math.sqrt(Const.winWidth*Const.winWidth + p_y*p_y) - hookLine;
+				p_y = Const.winHeight - Const.winWidth/2/tan_rotate;
+				p_x2 = Const.winWidth/2 + Math.sin(rotate*(Math.PI/180))*ac*-1;
+				p_y2 = Const.winHeight - Math.cos(rotate*(Math.PI/180))*ac;
+			}
+
+			/* 伸缩吧，钩子 */
+			var ac1 = cc.moveTo(1,cc.p(p_x2 ,p_y2));
+			var ac2 = cc.moveTo(1,cc.p(this.fishHook.x,this.fishHook.y));
+			var sequence = cc.sequence(ac1,ac2);
+			tt.fishHook.runAction(sequence);
+
+			/*  碰撞检测 */
+			
+
+			/* 捕鱼结果 */
 		}
 		
-		/* 目前旋转的角度 */		
-		var rotate = tt.fishHook.getRotationX(),
-			base_ang = tt.ang.toFixed(2),
-			p_x = 0,
-			p_y = 0,
-			tan_rotate = Math.abs(Math.tan(rotate*(Math.PI/180)));
 
-		/* 求出要到边缘的点 */
-		if(rotate > base_ang){
-			p_x = 0;
-			p_y = Const.winWidth/2/tan_rotate;
-		}else if(rotate <= base_ang &&  rotate > 0){
-			p_y = Const.winHeight;
-			p_x = Const.winWidth/2 - tan_rotate * p_y;
-		}else if(rotate <= 0 && rotate > -1*base_ang){
-			p_y = Const.winHeight;
-			p_x = Const.winWidth/2 + tan_rotate * p_y;
-		}else{
-			p_x = Const.winWidth;
-			p_y = Const.winWidth/2/tan_rotate;
-		}
-
-		/*  碰撞检测 */
-
-
-		/* 捕鱼结果 */
 
 	},
 
