@@ -94,7 +94,6 @@ var GameLayer = cc.Layer.extend({
 			},this);
 		}
 
-
 	},
 
 	rotateHook:function(tt){
@@ -170,14 +169,60 @@ var GameLayer = cc.Layer.extend({
 			tt.fishHook.scheduleOnce(function(){
 				tt.rotateHook(tt);
 			},2.1);
-			/*  碰撞检测 */
 
+			this.scheduleUpdate();
 
-			/* 捕鱼结果 */
 		}
 		
 
 
+	},
+
+	update:function(){
+		// var fishes = this.fishesS.concat(this.fishesM,this.fishesL);
+		var hook = this.fishHook.getBoundingBox();  
+		var bottom = cc.p(hook.x + hook.width / 2,hook.y*Const.scaleX*0.58);  
+		var right = cc.p(hook.x + hook.width,hook.y +hook.height*Const.scaleX*0.58 / 2);  
+		var left = cc.p(hook.x,hook.y*Const.scaleX*0.58 + hook.height*Const.scaleX*0.58 / 2);  
+		var top = cc.p(hook.x + hook.width / 2,hook.y*Const.scaleX*0.58 + hook.height*Const.scaleX*0.58);  
+
+		for(var fs = 0,fslen = this.fishesS.length ;  fs < fslen; fs++){
+			fish = this.fishesS[fs].getBoundingBox()
+			if(cc.rectContainsPoint(fish, left)||cc.rectContainsPoint(fish, right)||cc.rectContainsPoint(fish, top)||cc.rectContainsPoint(fish, bottom)){  
+				//发生碰撞  
+				//
+				console.warn('发生碰撞');
+				console.log('this.fishLayerS[fs]',this.fishLayerS[fs]);
+				this.fishLayerS[fs].stopAllActions();
+				this.unscheduleUpdate();
+				break;
+			}
+		}
+		for(var fm = 0,fmlen = this.fishesM.length ;  fm < fmlen; fm++){
+			fish = this.fishesM[fm].getBoundingBox()
+			if(cc.rectContainsPoint(fish, left)||cc.rectContainsPoint(fish, right)||cc.rectContainsPoint(fish, top)||cc.rectContainsPoint(fish, bottom)){  
+				//发生碰撞  
+				//
+				console.warn('发生碰撞');
+				console.log('this.fishLayerM[fm]',this.fishLayerM[fm]);
+				this.fishLayerM[fm].stopAllActions();
+				this.unscheduleUpdate();
+				break;
+			}
+		}
+		for(var fl = 0,fllen = this.fishesL.length ;  fl < fllen; fl++){
+			fish = this.fishesL[fl].getBoundingBox()
+			if(cc.rectContainsPoint(fish, left)||cc.rectContainsPoint(fish, right)||cc.rectContainsPoint(fish, top)||cc.rectContainsPoint(fish, bottom)){  
+				//发生碰撞  
+				//
+				console.warn('发生碰撞');
+				console.log('this.fishLayerL[fl]',this.fishLayerL[fl]);
+				this.fishLayerL[fl].stopAllActions();
+				this.unscheduleUpdate();
+				break;
+			}
+		}
+		
 	},
 
 	fadeOutHook:function(){
