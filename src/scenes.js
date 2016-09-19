@@ -74,11 +74,7 @@ var GameLayer = cc.Layer.extend({
 		this.addChild(this.fishHook,20);
 
 		// 钩子旋转
-		var action1 = cc.rotateTo(1,40,0);
-		var action2 = cc.rotateTo(1,0,0);
-		var action3 = cc.rotateTo(1,-40,0);
-		var sequence = cc.sequence(action1,action2,action3,action2);
-		this.fishHook.runAction(cc.repeatForever(sequence));
+		this.rotateHook(this);
 
 		var tt = this;
 		// 点击页面，释放钩子
@@ -101,17 +97,21 @@ var GameLayer = cc.Layer.extend({
 
 	},
 
+	rotateHook:function(tt){
+		tt.hookStop = false;
+		// 钩子旋转
+		var action1 = cc.rotateTo(1,40,0);
+		var action2 = cc.rotateTo(1,0,0);
+		var action3 = cc.rotateTo(1,-40,0);
+		var sequence = cc.sequence(action1,action2,action3,action2);
+		tt.fishHook.runAction(cc.repeatForever(sequence));
+	},
+
 	hookFish:function(tt){  //钓鱼
 		
 		/* 钩子的动画 */
 		if(tt.hookStop){
-			tt.hookStop = false;
-			// 钩子旋转
-			var action1 = cc.rotateTo(1,40,0);
-			var action2 = cc.rotateTo(1,0,0);
-			var action3 = cc.rotateTo(1,-40,0);
-			var sequence = cc.sequence(action1,action2,action3,action2);
-			tt.fishHook.runAction(cc.repeatForever(sequence));
+			tt.rotateHook(tt);
 		}else{
 			tt.hookStop = true;
 			tt.fishHook.stopAllActions(); 
@@ -167,9 +167,11 @@ var GameLayer = cc.Layer.extend({
 			var ac2 = cc.moveTo(1,cc.p(this.fishHook.x,this.fishHook.y));
 			var sequence = cc.sequence(ac1,ac2);
 			tt.fishHook.runAction(sequence);
-
+			tt.fishHook.scheduleOnce(function(){
+				tt.rotateHook(tt);
+			},2.1);
 			/*  碰撞检测 */
-			
+
 
 			/* 捕鱼结果 */
 		}
